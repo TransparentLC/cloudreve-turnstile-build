@@ -8,15 +8,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
     - name: Setup node
       uses: actions/setup-node@v4
       with:
         node-version: latest
         check-latest: true
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v3
-      with:
-        version: latest
     - name: Setup go
       uses: actions/setup-go@v5
       with:
@@ -32,9 +32,9 @@ jobs:
 
         git clone https://github.com/cloudreve/Cloudreve.git --depth 1 --branch ${VERSION} --recurse-submodules
         cd Cloudreve
-        git apply cloudreve.diff
+        git apply ../cloudreve.diff
         cd assets
-        git apply ../frontend.diff
+        git apply ../../frontend.diff
 
         export GENERATE_SOURCEMAP=false
         pnpm import yarn.lock
