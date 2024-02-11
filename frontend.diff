@@ -1,0 +1,75 @@
+diff --git a/src/component/Login/ReCaptcha.js b/src/component/Login/ReCaptcha.js
+index b6c6f83..473e60b 100644
+--- a/src/component/Login/ReCaptcha.js
++++ b/src/component/Login/ReCaptcha.js
+@@ -4,12 +4,12 @@ import makeAsyncScriptLoader from "react-async-script";
+ const callbackName = "onloadcallback";
+ const globalName = "grecaptcha";
+ 
+-function getURL() {
+-    const hostname = "recaptcha.net";
+-    return `https://${hostname}/recaptcha/api.js?onload=${callbackName}&render=explicit`;
+-}
++export const ReCaptcha = makeAsyncScriptLoader(`https://recaptcha.net/recaptcha/api.js?onload=${callbackName}&render=explicit`, {
++    callbackName,
++    globalName,
++})(ReCAPTCHA);
+ 
+-export default makeAsyncScriptLoader(getURL, {
++export const Turnstile = makeAsyncScriptLoader(`https://challenges.cloudflare.com/turnstile/v0/api.js?onload=${callbackName}&render=explicit&compat=recaptcha`, {
+     callbackName,
+     globalName,
+ })(ReCAPTCHA);
+diff --git a/src/hooks/recaptcha.js b/src/hooks/recaptcha.js
+index cb76236..37748de 100644
+--- a/src/hooks/recaptcha.js
++++ b/src/hooks/recaptcha.js
+@@ -1,7 +1,7 @@
+ import React, { useCallback, useEffect, useRef, useState } from "react";
+ import { useSelector } from "react-redux";
+ import { FormControl } from "@material-ui/core";
+-import ReCaptcha from "../component/Login/ReCaptcha";
++import { ReCaptcha, Turnstile } from "../component/Login/ReCaptcha";
+ import { defaultValidate, useStyle } from "./useCaptcha";
+ 
+ const Recaptcha = ({ captchaRef, setLoading }) => {
+@@ -22,16 +22,29 @@ const Recaptcha = ({ captchaRef, setLoading }) => {
+     return (
+         <div className={classes.captchaContainer}>
+             <FormControl margin="normal" required fullWidth>
+-                <div>
+-                    <ReCaptcha
+-                        style={{
+-                            display: "inline-block",
+-                        }}
+-                        sitekey={reCaptchaKey}
+-                        onChange={(value) => setCaptcha(value)}
+-                        id="captcha"
+-                        name="captcha"
+-                    />
++                <div style={{textAlign: "center"}}>
++                    {reCaptchaKey.startsWith("turnstile:") ? (
++                        <Turnstile
++                            style={{
++                                display: "inline-block",
++                            }}
++                            sitekey={reCaptchaKey.replace(/^turnstile:/, "")}
++                            onChange={(value) => setCaptcha(value)}
++                            id="captcha"
++                            name="captcha"
++                            theme={(window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? "dark" : "light"}
++                        />
++                    ) : (
++                        <ReCaptcha
++                            style={{
++                                display: "inline-block",
++                            }}
++                            sitekey={reCaptchaKey}
++                            onChange={(value) => setCaptcha(value)}
++                            id="captcha"
++                            name="captcha"
++                        />
++                    )}
+                 </div>
+             </FormControl>{" "}
+         </div>

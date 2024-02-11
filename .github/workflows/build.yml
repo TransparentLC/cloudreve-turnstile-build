@@ -1,0 +1,55 @@
+name: Build
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v3
+      with:
+        version: latest
+    - name: Setup node
+      uses: actions/setup-node@v4
+      with:
+        node-version: latest
+        check-latest: true
+        cache: pnpm
+    - name: Setup go
+      uses: actions/setup-go@v5
+      with:
+        go-version: stable
+        check-latest: true
+    - name: Clone Cloudreve and apply patches then build
+      run: |
+        TAGS=$(curl https://api.github.com/repos/cloudreve/Cloudreve/tags)
+        VERSION=$(echo $TAGS | jq -r ".[0].name")
+        SHORT_COMMIT=$(echo $TAGS | jq -r ".[0].commit.sha[:7]")
+        echo "Version: ${VERSION}"
+        echo "Commit: ${SHORT_COMMIT}"
+
+        git clone https://github.com/cloudreve/Cloudreve.git --depth 1 --branch ${VERSION} --recurse-submodules
+        cd Cloudreve
+        git apply cloudreve.diff
+        cd assets
+        git apply ../frontend.diff
+
+        export GENERATE_SOURCEMAP=false
+        pnpm import yarn.lock
+        pnpm install --shamefully-hoist
+        pnpm run build
+        cd ..
+        zip -r -9 assets.zip assets/build
+
+        export CGO_ENABLED=0
+        export GO_LDFLAGS="-X 'github.com/cloudreve/Cloudreve/v3/pkg/conf.BackendVersion=${VERSION}' -X 'github.com/cloudreve/Cloudreve/v3/pkg/conf.LastCommit=${SHORT_COMMIT}'"
+        go mod tidy
+        GOOS=linux GOARCH=amd64 go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags $GO_LDFLAGS -trimpath
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-linux-amd64
+        path: cloudreve-linux-amd64
