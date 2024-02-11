@@ -47,12 +47,80 @@ jobs:
         export CGO_ENABLED=0
         export GO_LDFLAGS="-X github.com/cloudreve/Cloudreve/v3/pkg/conf.BackendVersion=${VERSION} -X github.com/cloudreve/Cloudreve/v3/pkg/conf.LastCommit=${SHORT_COMMIT}"
         go mod tidy
+
+        export GOOS=darwin
+        export GOARCH=amd64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARCH=arm64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags "${GO_LDFLAGS}" -trimpath
         export GOOS=linux
         export GOARCH=amd64
         echo "Building ${GOOS} ${GOARCH}"
         go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARCH=arm64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARCH=arm
+        export GOARM=5
+        echo "Building ${GOOS} ${GOARCH}v${GOARM}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}v${GOARM}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARM=6
+        echo "Building ${GOOS} ${GOARCH}v${GOARM}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}v${GOARM}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARM=7
+        echo "Building ${GOOS} ${GOARCH}v${GOARM}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}v${GOARM}" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOOS=windows
+        export GOARCH=amd64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}.exe" -ldflags "${GO_LDFLAGS}" -trimpath
+        export GOARCH=arm64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}.exe" -ldflags "${GO_LDFLAGS}" -trimpath
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-darwin-amd64
+        path: cloudreve-darwin-amd64
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-darwin-arm64
+        path: cloudreve-darwin-arm64
     - uses: actions/upload-artifact@v4
       with:
         compression-level: 9
         name: cloudreve-linux-amd64
         path: cloudreve-linux-amd64
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-linux-arm64
+        path: cloudreve-linux-arm64
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-linux-amdv5
+        path: cloudreve-linux-amdv5
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-linux-amdv6
+        path: cloudreve-linux-amdv6
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-linux-amdv7
+        path: cloudreve-linux-amdv7
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-windows-amd64
+        path: cloudreve-windows-amd64.exe
+    - uses: actions/upload-artifact@v4
+      with:
+        compression-level: 9
+        name: cloudreve-windows-arm64
+        path: cloudreve-windows-arm64.exe
