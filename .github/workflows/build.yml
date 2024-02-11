@@ -50,7 +50,7 @@ jobs:
         export GOOS=linux
         export GOARCH=amd64
         echo "Building ${GOOS} ${GOARCH}"
-        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags $GO_LDFLAGS -trimpath
+        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags "${GO_LDFLAGS}" -trimpath
     - uses: actions/upload-artifact@v4
       with:
         compression-level: 9
