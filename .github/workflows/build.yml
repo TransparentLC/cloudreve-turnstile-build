@@ -24,7 +24,7 @@ jobs:
         check-latest: true
     - name: Clone Cloudreve and apply patches then build
       run: |
-        TAGS=$(curl https://api.github.com/repos/cloudreve/Cloudreve/tags)
+        TAGS=$(curl --silent https://api.github.com/repos/cloudreve/Cloudreve/tags)
         VERSION=$(echo $TAGS | jq -r ".[0].name")
         SHORT_COMMIT=$(echo $TAGS | jq -r ".[0].commit.sha[:7]")
         echo "Version: ${VERSION}"
@@ -36,6 +36,7 @@ jobs:
         cd assets
         git apply ../../frontend.diff
 
+        export CI=false
         export GENERATE_SOURCEMAP=false
         pnpm import yarn.lock
         pnpm install --shamefully-hoist
