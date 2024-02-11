@@ -45,9 +45,12 @@ jobs:
         zip -r -9 assets.zip assets/build
 
         export CGO_ENABLED=0
-        export GO_LDFLAGS="-X 'github.com/cloudreve/Cloudreve/v3/pkg/conf.BackendVersion=${VERSION}' -X 'github.com/cloudreve/Cloudreve/v3/pkg/conf.LastCommit=${SHORT_COMMIT}'"
+        export GO_LDFLAGS="-X github.com/cloudreve/Cloudreve/v3/pkg/conf.BackendVersion=${VERSION} -X github.com/cloudreve/Cloudreve/v3/pkg/conf.LastCommit=${SHORT_COMMIT}"
         go mod tidy
-        GOOS=linux GOARCH=amd64 go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags $GO_LDFLAGS -trimpath
+        export GOOS=linux
+        export GOARCH=amd64
+        echo "Building ${GOOS} ${GOARCH}"
+        go build -o "../cloudreve-${GOOS}-${GOARCH}" -ldflags $GO_LDFLAGS -trimpath
     - uses: actions/upload-artifact@v4
       with:
         compression-level: 9
