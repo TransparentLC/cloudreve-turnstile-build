@@ -20,6 +20,36 @@ index b6c6f83..473e60b 100644
      callbackName,
      globalName,
  })(ReCAPTCHA);
+diff --git a/src/config.ts b/src/config.ts
+index 8addfab..eac9021 100644
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -8,6 +8,7 @@ export const imgPreviewSuffix = [
+     "jpeg",
+     "svg",
+     "webp",
++    "avif",
+ ];
+ export let msDocPreviewSuffix = [
+     "ppt",
+@@ -19,7 +20,7 @@ export let msDocPreviewSuffix = [
+     "xls",
+ ];
+ export const subtitleSuffix = ["ass", "srt", "vrr"];
+-export const audioPreviewSuffix = ["mp3", "ogg", "wav", "flac", "m4a"];
++export const audioPreviewSuffix = ["mp3", "ogg", "wav", "flac", "m4a", "opus"];
+ export const videoPreviewSuffix = ["mp4", "mkv", "webm", "avi", "m3u8", "mov"];
+ export const pdfPreviewSuffix = ["pdf"];
+ export const editSuffix = ["md", "txt"];
+@@ -49,7 +50,7 @@ export const codePreviewSuffix = {
+     yaml: "yaml",
+ };
+ export const mediaType = {
+-    audio: ["mp3", "flac", "ape", "wav", "acc", "ogg", "m4a"],
++    audio: ["mp3", "flac", "ape", "wav", "acc", "ogg", "m4a", "opus"],
+     video: ["mp4", "flv", "avi", "wmv", "mkv", "rm", "rmvb", "mov", "ogv"],
+     image: [
+         "bmp",
 diff --git a/src/hooks/recaptcha.js b/src/hooks/recaptcha.js
 index cb76236..37748de 100644
 --- a/src/hooks/recaptcha.js
