@@ -20,6 +20,19 @@ index b6c6f83..473e60b 100644
      callbackName,
      globalName,
  })(ReCAPTCHA);
+diff --git a/src/component/Login/ReCaptchaWrapper.js b/src/component/Login/ReCaptchaWrapper.js
+index 7fc46c3..109e519 100644
+--- a/src/component/Login/ReCaptchaWrapper.js
++++ b/src/component/Login/ReCaptchaWrapper.js
+@@ -157,7 +157,7 @@ ReCAPTCHA.propTypes = {
+     tabindex: PropTypes.number,
+     onExpired: PropTypes.func,
+     onErrored: PropTypes.func,
+-    size: PropTypes.oneOf(["compact", "normal", "invisible"]),
++    size: PropTypes.oneOf(["compact", "normal", "invisible", "flexible"]),
+     stoken: PropTypes.string,
+     hl: PropTypes.string,
+     badge: PropTypes.oneOf(["bottomright", "bottomleft", "inline"]),
 diff --git a/src/config.ts b/src/config.ts
 index 8addfab..eac9021 100644
 --- a/src/config.ts
@@ -51,7 +64,7 @@ index 8addfab..eac9021 100644
      image: [
          "bmp",
 diff --git a/src/hooks/recaptcha.js b/src/hooks/recaptcha.js
-index cb76236..37748de 100644
+index cb76236..52ceb72 100644
 --- a/src/hooks/recaptcha.js
 +++ b/src/hooks/recaptcha.js
 @@ -1,7 +1,7 @@
@@ -63,7 +76,7 @@ index cb76236..37748de 100644
  import { defaultValidate, useStyle } from "./useCaptcha";
  
  const Recaptcha = ({ captchaRef, setLoading }) => {
-@@ -22,16 +22,29 @@ const Recaptcha = ({ captchaRef, setLoading }) => {
+@@ -22,16 +22,27 @@ const Recaptcha = ({ captchaRef, setLoading }) => {
      return (
          <div className={classes.captchaContainer}>
              <FormControl margin="normal" required fullWidth>
@@ -80,13 +93,11 @@ index cb76236..37748de 100644
 +                <div style={{textAlign: "center"}}>
 +                    {reCaptchaKey.startsWith("turnstile:") ? (
 +                        <Turnstile
-+                            style={{
-+                                display: "inline-block",
-+                            }}
 +                            sitekey={reCaptchaKey.replace(/^turnstile:/, "")}
 +                            onChange={(value) => setCaptcha(value)}
 +                            id="captcha"
 +                            name="captcha"
++                            size="flexible"
 +                            theme={(window.matchMedia && window.matchMedia("(prefers-color-scheme:dark)").matches) ? "dark" : "light"}
 +                        />
 +                    ) : (
